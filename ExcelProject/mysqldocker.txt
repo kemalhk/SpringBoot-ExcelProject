@@ -1,0 +1,17 @@
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:5.7
+
+docker network create sporingboot-excel-mysql
+
+
+
+docker network create springboot-excel-mysql
+docker run --name mysqldb --network springboot-excel-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=expensetracker -e MYSQL_USER=sa -e MYSQL_PASSWORD=password -d mysql:5.7
+
+docker ps
+docker exec -it b93c(container id)  bash
+mysql -usa -ppassword
+use expensetracker;
+
+
+
+docker run --name mysqldb --network springboot-excel-mysql -e MYSQL_ROOT_PASSWORD=password MYSQL_DATABASE=expensetracker -e  MYSQL_USER=sa -e MYSQL_PASSWORD=password -d mysql:5.7
