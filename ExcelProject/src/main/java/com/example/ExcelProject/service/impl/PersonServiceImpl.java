@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 
 
@@ -24,7 +25,35 @@ import java.util.ArrayList;
 public class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;
+
+
     private final JobRepository jobRepository;
+    @Override
+    public PersonDto getPersonById(Long id) {
+        Optional<Person> personOptional = personRepository.findById(id);
+        if (personOptional.isPresent()) {
+            Person person = personOptional.get();
+
+            PersonDto personDto = new PersonDto();
+            personDto.setId(person.getId());
+            personDto.setName(person.getName());
+            personDto.setSurname(person.getSurname());
+            personDto.setAge(person.getAge());
+
+            Job job = person.getJob();
+            if (job != null) {
+                JobDto jobDto = new JobDto();
+                jobDto.setId(job.getId());
+                jobDto.setDepartmentName(job.getDepartmentName());
+                jobDto.setDepartmentCode(job.getDepartmentCode());
+                personDto.setJob(jobDto);
+            }
+
+            return personDto;
+        } else {
+            return null;
+        }
+    }
 
     @Override
     @Transactional
@@ -78,6 +107,8 @@ public class PersonServiceImpl implements PersonService {
         });
         return personDtos;
     }
+
+
     @Override
     public void delete(Long id) {
         personRepository.deleteById(id);
@@ -85,7 +116,37 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonDto updatePerson(Long id, PersonDto personDto) {
-        return null;
+
+        Optional<Person> personOptional = personRepository.findById(id);
+        if (personOptional.isPresent()) {
+            Person person = personOptional.get();
+
+            person.setName(personDto.getName());
+            person.setSurname(personDto.getSurname());
+            person.setAge(personDto.getAge());
+
+            JobDto jobDto = personDto.getJob();
+            if (jobDto != null) {
+                Job job = new Job();
+                job.setId(jobDto.getId());
+                job.setDepartmentName(jobDto.getDepartmentName());
+                job.setDepartmentCode(jobDto.getDepartmentCode());
+                person.setJob(job);
+            }
+            else {
+                // İş nesnesi null olarak ayarlanırsa, kişinin iş bilgisi de silinebilir
+                person.setJob(null);
+            }
+
+            // Kişinin güncellenmiş hali veritabanına kaydedilir
+            personRepository.save(person);
+            return personDto;
+        }
+        else
+        {
+            // Kişi bulunamazsa veya güncelleme başarısız olursa null döndür
+            return null;
+        }
     }
 
     @Override
