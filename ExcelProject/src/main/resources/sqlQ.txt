@@ -1,0 +1,13 @@
+UPDATE person AS p
+INNER JOIN (SELECT pe.job_id, j.department_name FROM person AS pe
+            JOIN job AS j ON pe.job_id = j.id) AS subquery
+ON p.job_id = subquery.job_id
+SET p.department_name = subquery.department_name
+WHERE p.name = 'isim3' AND p.surname = 'Soyisim3';
+
+
+
+INSERT INTO job (department_name, department_code) VALUES ('Departman1', 'Code1');
+
+INSERT INTO person (name, surname, age, job_id)
+VALUES ('isim1', 'Soyisim1', 30, (SELECT id FROM job WHERE department_name = 'Departman1'));

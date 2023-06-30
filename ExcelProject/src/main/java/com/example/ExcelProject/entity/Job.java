@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,9 +22,11 @@ public class Job implements Serializable {
     @Column(length = 50,name = "departmentName")
     private String departmentName;
 
-    @OneToOne(mappedBy = "job")
-    private Person person;
     @Column(length = 50,name = "departmentCode")
     private String departmentCode;
+
+    @OneToMany
+    @JoinColumn(name = "departmentName", referencedColumnName = "departmentName")
+    private List<Person> persons;
 
 }

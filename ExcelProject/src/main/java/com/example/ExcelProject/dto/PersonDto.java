@@ -1,5 +1,6 @@
 package com.example.ExcelProject.dto;
 
+import com.example.ExcelProject.entity.Job;
 import lombok.Data;
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class PersonDto {
         private String name;
         private String surname;
         private Integer age;
-        private String job;
+        private JobDto job;
+
 
 }

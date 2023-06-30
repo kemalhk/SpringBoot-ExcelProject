@@ -9,9 +9,14 @@ docker run --name mysqldb --network springboot-excel-mysql -e MYSQL_ROOT_PASSWOR
 
 docker ps
 docker exec -it b93c(container id)  bash
-mysql -usa -ppassword
-use expensetracker;
+mysql -uroot -ppassword
+use excelProject;
 
 
 
 docker run --name mysqldb --network springboot-excel-mysql -e MYSQL_ROOT_PASSWORD=password MYSQL_DATABASE=expensetracker -e  MYSQL_USER=sa -e MYSQL_PASSWORD=password -d mysql:5.7
+
+
+ docker run -d -p 3306:3306 --name excelProject -e MYSQL_ROOT_PASSWORD=password mysql:5.7
+ port hatası veriyorsa
+    cmd net stop mysql80

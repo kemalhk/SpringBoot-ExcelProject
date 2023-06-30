@@ -29,6 +29,6 @@ public class Person {
 
     @OneToOne
     @JoinColumn(name = "job_id")
-    private Job job;
+    private Job departmentName;
 
 }
