@@ -8,7 +8,7 @@ import com.example.ExcelProject.repository.JobRepository;
 import com.example.ExcelProject.repository.PersonRepository;
 import com.example.ExcelProject.service.PersonService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.stream.Stream;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -38,9 +37,21 @@ public class PersonServiceImpl implements PersonService {
         person.setSurname(personDto.getSurname());
         person.setAge(personDto.getAge());
 
-        final Person personDb=personRepository.save(person);
+
+        if (personDto.getJob() != null) {
+            Job job = new Job();
+            job.setId(personDto.getJob().getId());
+            job.setDepartmentName(personDto.getJob().getDepartmentName());
+            job.setDepartmentCode(personDto.getJob().getDepartmentCode());
+            person.setJob(job);
+        }
+
+        final Person personDb = personRepository.save(person);
         personDto.setId(personDb.getId());
+
+
         return personDto;
+
     }
 
 
@@ -55,7 +66,7 @@ public class PersonServiceImpl implements PersonService {
             personDto.setSurname(it.getSurname());
             personDto.setAge(it.getAge());
 
-            Job job = it.getDepartmentName();
+            Job job = it.getJob();
             if (job != null) {
                 JobDto jobDto = new JobDto();
                 jobDto.setId(job.getId());
