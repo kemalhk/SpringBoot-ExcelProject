@@ -5,6 +5,7 @@ import com.example.ExcelProject.dto.PersonDto;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import java.io.InputStream;
 import java.util.List;
 
 public interface PersonService {
@@ -25,6 +26,10 @@ public interface PersonService {
 
     // Update operation
     PersonDto updatePerson(Long id, PersonDto personDto);
+
+//    List<PersonDto> importPersonsFromExcel(String filePath);
+
+    List<PersonDto> readPersonsFromExcel(InputStream inputStream) throws Exception;
 
 
 

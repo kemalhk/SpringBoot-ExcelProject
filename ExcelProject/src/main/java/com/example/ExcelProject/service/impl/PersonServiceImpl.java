@@ -7,6 +7,7 @@ import com.example.ExcelProject.entity.Job;
 import com.example.ExcelProject.repository.JobRepository;
 import com.example.ExcelProject.repository.PersonRepository;
 import com.example.ExcelProject.service.PersonService;
+import com.example.ExcelProject.util.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.io.InputStream;
 
 
 @Service
@@ -162,4 +164,31 @@ public class PersonServiceImpl implements PersonService {
             return personDto;
         });
     }
+
+
+    @Override
+    public List<PersonDto> readPersonsFromExcel(InputStream inputStream) throws Exception {
+        List<PersonDto> persons = ExcelUtils.readPersonsFromExcel(inputStream);
+        for (PersonDto personDto : persons) {
+            Person person = new Person();
+            person.setName(personDto.getName());
+            person.setSurname(personDto.getSurname());
+            person.setAge(personDto.getAge());
+
+            JobDto jobDto = personDto.getJob();
+            if (jobDto != null) {
+                Job job = new Job();
+                job.setId(jobDto.getId());
+                job.setDepartmentName(jobDto.getDepartmentName());
+                job.setDepartmentCode(jobDto.getDepartmentCode());
+
+                person.setJob(job);
+            }
+
+            personRepository.save(person);
+        }
+        return persons;
+
+    }
+
 }

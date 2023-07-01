@@ -1,13 +1,16 @@
 package com.example.ExcelProject.controller;
 
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.example.ExcelProject.dto.PersonDto;
 import com.example.ExcelProject.entity.Person;
 import com.example.ExcelProject.service.PersonService;
+import com.example.ExcelProject.util.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -64,24 +67,15 @@ public class PersonController {
         }
     }
 
-//    @PutMapping("/{id}")
-//
-//    public ResponseEntity<Person> updatePerson(@PathVariable Long id,@RequestBody PersonDto updatedPerson){
-//        PersonDto personDto = personService.getPersonById(id);
-//        if (personDto != null) {
-//            updatedPerson.setId(id);
-//            PersonDto updated = personService.updatePerson(id, updatedPerson);
-//
-//            return ResponseEntity.ok(updated);
-//        }
-//        return ResponseEntity.notFound().build();
-//    }
-//
 
-
-
-
-
-
+    @PostMapping("/upload")
+    public ResponseEntity<List<PersonDto>> uploadExcelFile(@RequestParam("file") MultipartFile file) {
+        try {
+            List<PersonDto> persons = personService.readPersonsFromExcel(file.getInputStream());
+            return ResponseEntity.ok(persons);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }
