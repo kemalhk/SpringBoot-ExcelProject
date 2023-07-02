@@ -17,3 +17,17 @@ INSERT INTO person (name, surname, age, job_id, department_name)
 VALUES ('t', 'Soyisim1', 30,
         (SELECT id FROM job WHERE department_name = 'Departman1'),
         (SELECT department_name FROM job WHERE department_name = 'Departman1'));
+
+
+
+{
+        "id": null,
+        "name": "test1",
+        "surname": "test1",
+        "age": 1,
+        "job": {
+            "id": null,
+            "departmentName": "Departman1",
+            "departmentCode": "Code1"
+        }
+    },

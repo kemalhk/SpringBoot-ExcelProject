@@ -167,6 +167,7 @@ public class PersonServiceImpl implements PersonService {
 
 
     @Override
+
     public List<PersonDto> readPersonsFromExcel(InputStream inputStream) throws Exception {
         List<PersonDto> persons = ExcelUtils.readPersonsFromExcel(inputStream);
         for (PersonDto personDto : persons) {
@@ -175,12 +176,17 @@ public class PersonServiceImpl implements PersonService {
             person.setSurname(personDto.getSurname());
             person.setAge(personDto.getAge());
 
-            JobDto jobDto = personDto.getJob();
-            if (jobDto != null) {
+            if (personDto.getJob() != null) {
                 Job job = new Job();
-                job.setId(jobDto.getId());
-                job.setDepartmentName(jobDto.getDepartmentName());
-                job.setDepartmentCode(jobDto.getDepartmentCode());
+                job.setId(personDto.getJob().getId());
+                job.setDepartmentName(personDto.getJob().getDepartmentName());
+                job.setDepartmentCode(personDto.getJob().getDepartmentCode());
+
+                // Mevcut departmanı kontrol etmek ve ID'sini bulmak için gerekli işlemler
+                Job existingJob = jobRepository.findByDepartmentCode(job.getDepartmentCode());
+                if (existingJob != null) {
+                    job.setId(existingJob.getId());
+                }
 
                 person.setJob(job);
             }

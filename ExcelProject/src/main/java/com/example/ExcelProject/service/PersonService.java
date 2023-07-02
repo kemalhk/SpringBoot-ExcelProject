@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface PersonService {
 
+
     //////////////////////////////////////////
     PersonDto getPersonById(Long id);
 
@@ -27,7 +28,7 @@ public interface PersonService {
     // Update operation
     PersonDto updatePerson(Long id, PersonDto personDto);
 
-//    List<PersonDto> importPersonsFromExcel(String filePath);
+
 
     List<PersonDto> readPersonsFromExcel(InputStream inputStream) throws Exception;
 
