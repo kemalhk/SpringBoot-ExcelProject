@@ -7,6 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import java.io.InputStream;
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+
 
 public interface PersonService {
 
@@ -31,6 +35,12 @@ public interface PersonService {
 
 
     List<PersonDto> readPersonsFromExcel(InputStream inputStream) throws Exception;
+
+
+
+    void generateExcel(HttpServletResponse response) throws IOException;
+
+
 
 
 

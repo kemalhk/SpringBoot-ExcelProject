@@ -25,9 +25,9 @@ public class Job implements Serializable {
     @Column(length = 50,name = "departmentCode")
     private String departmentCode;
 
-    @OneToMany
-    @JoinColumn(name = "job_departmentName", referencedColumnName = "departmentName")
-    private List<Person> persons;
+//    @OneToMany
+//    @JoinColumn(name = "job_departmentName", referencedColumnName = "departmentName")
+//    private List<Person> persons;
 
 
 

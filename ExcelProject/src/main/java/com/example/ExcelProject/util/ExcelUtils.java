@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -90,5 +91,42 @@ public class ExcelUtils {
         workbook.close();
 
         return persons;
+    }
+
+
+    public void exportPersonsToExcel(List<PersonDto> persons, OutputStream outputStream) throws Exception {
+        // Workbook oluştur
+        Workbook workbook = new XSSFWorkbook();
+
+        // Yeni bir sayfa oluştur
+        Sheet sheet = workbook.createSheet("Persons");
+
+        // Başlık satırını oluştur
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Name");
+        headerRow.createCell(1).setCellValue("Surname");
+        headerRow.createCell(2).setCellValue("Age");
+        headerRow.createCell(3).setCellValue("Job Department Name");
+        headerRow.createCell(4).setCellValue("Job Department Code");
+
+        // Kişi verilerini yazdır
+        int rowIndex = 1;
+        for (PersonDto personDto : persons) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(personDto.getName());
+            row.createCell(1).setCellValue(personDto.getSurname());
+            row.createCell(2).setCellValue(personDto.getAge());
+
+            if (personDto.getJob() != null) {
+                row.createCell(3).setCellValue(personDto.getJob().getDepartmentName());
+                row.createCell(4).setCellValue(personDto.getJob().getDepartmentCode());
+            }
+        }
+
+        // Workbook'u çıktı akışına yazdır
+        workbook.write(outputStream);
+
+        // Workbook'u kapat
+        workbook.close();
     }
 }

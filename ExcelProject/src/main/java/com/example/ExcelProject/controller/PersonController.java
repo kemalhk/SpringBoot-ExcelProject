@@ -12,6 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+
+
 import java.util.List;
 
 @RestController
@@ -77,5 +83,13 @@ public class PersonController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+
+    @GetMapping("/export")
+    public void generateExcelReport(HttpServletResponse response) throws IOException {
+        personService.generateExcel(response);
+    }
+
 
 }
