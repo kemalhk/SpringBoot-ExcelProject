@@ -200,7 +200,7 @@ public class PersonServiceImpl implements PersonService {
                 job.setDepartmentName(personDto.getJob().getDepartmentName());
                 job.setDepartmentCode(personDto.getJob().getDepartmentCode());
 
-                // Mevcut departmanı kontrol etmek ve ID'sini bulmak için gerekli işlemler
+                // Mevcut departmanı kontrol etmek ve ID'sini bul
                 Job existingJob = jobRepository.findByDepartmentCode(job.getDepartmentCode());
                 if (existingJob != null) {
                     job.setId(existingJob.getId());
