@@ -12,11 +12,11 @@ import java.util.List;
 @Table(name = "job")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+
 public class Job implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="id")
     private Long id;
 
     @Column(length = 50,name = "departmentName")

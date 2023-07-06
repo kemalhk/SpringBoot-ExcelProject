@@ -2,6 +2,7 @@ package com.example.ExcelProject.controller;
 
 
 import ch.qos.logback.core.net.SyslogOutputStream;
+import com.example.ExcelProject.dto.JobDto;
 import com.example.ExcelProject.dto.PersonDto;
 import com.example.ExcelProject.entity.Person;
 import com.example.ExcelProject.service.PersonService;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.IOException;
 
 
@@ -34,6 +33,11 @@ public class PersonController {
     @PostMapping
     public ResponseEntity<PersonDto> createPerson(@RequestBody PersonDto personDto){
         return ResponseEntity.ok(personService.save(personDto));
+    }
+
+    @PostMapping("/job")
+    public ResponseEntity<JobDto> createPerson(@RequestBody JobDto jobDto){
+        return ResponseEntity.ok(personService.saveJob(jobDto));
     }
 
     @GetMapping("/{id}")

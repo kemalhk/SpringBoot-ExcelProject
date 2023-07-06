@@ -36,9 +36,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;
-
-
     private final JobRepository jobRepository;
+
     @Override
     public PersonDto getPersonById(Long id) {
         Optional<Person> personOptional = personRepository.findById(id);
@@ -77,7 +76,6 @@ public class PersonServiceImpl implements PersonService {
         person.setSurname(personDto.getSurname());
         person.setAge(personDto.getAge());
 
-
         if (personDto.getJob() != null) {
             Job job = new Job();
             job.setId(personDto.getJob().getId());
@@ -85,18 +83,30 @@ public class PersonServiceImpl implements PersonService {
             job.setDepartmentCode(personDto.getJob().getDepartmentCode());
             person.setJob(job);
         }
-
         final Person personDb = personRepository.save(person);
         personDto.setId(personDb.getId());
 
-
         return personDto;
+    }
+
+    public JobDto saveJob(JobDto jobDto){
+        Assert.notNull(jobDto.getDepartmentCode(), "Department Code cannot be null.");
+        Assert.notNull(jobDto.getDepartmentName(), "Department Name cannot be null.");
+
+        Job job = new Job();
+        job.setDepartmentCode(jobDto.getDepartmentCode());
+        job.setDepartmentName(jobDto.getDepartmentName());
+
+        final Job savedJob = jobRepository.save(job);
+        jobDto.setId(savedJob.getId());
+
+        return jobDto;
 
     }
 
 
     @Override
-    public List<PersonDto> getAll(){
+    public List<PersonDto>  getAll(){
         List<Person> persons = personRepository.findAll();
         List<PersonDto> personDtos = new ArrayList<>();
         persons.forEach(it ->{

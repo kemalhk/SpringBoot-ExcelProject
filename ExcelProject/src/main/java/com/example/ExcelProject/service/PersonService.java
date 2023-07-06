@@ -1,6 +1,7 @@
 package com.example.ExcelProject.service;
 
 
+import com.example.ExcelProject.dto.JobDto;
 import com.example.ExcelProject.dto.PersonDto;
 
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ public interface PersonService {
 
     // Save operation
     PersonDto save(PersonDto personDto);
+
+    JobDto saveJob(JobDto JobDto);
 
     // Delete operation
     void delete(Long id);
