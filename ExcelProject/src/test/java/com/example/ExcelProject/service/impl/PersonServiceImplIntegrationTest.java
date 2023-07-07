@@ -115,9 +115,10 @@ public class PersonServiceImplIntegrationTest {
         person.setAge(1);
 
         Job job = new Job();
+        job.setId(1L);
         job.setDepartmentCode("Test-Code");
         job.setDepartmentName("Test-DepartmentName");
-
+        person.setJob(job);
 
         // Create a mock of PersonRepository
         PersonRepository personRepository = mock(PersonRepository.class);
@@ -133,6 +134,12 @@ public class PersonServiceImplIntegrationTest {
         assertEquals("Test-Name", persons.get(0).getName());
         assertEquals("Test-Surname", persons.get(0).getSurname());
         assertEquals(1, persons.get(0).getAge());
+
+
+        assertEquals(1L, persons.get(0).getJob().getId());
+        assertEquals("Test-Code",persons.get(0).getJob().getDepartmentCode());
+        assertEquals("Test-DepartmentName",persons.get(0).getJob().getDepartmentName());
+
     }
 
 
