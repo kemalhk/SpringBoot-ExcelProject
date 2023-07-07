@@ -206,13 +206,48 @@ public class PersonServiceImpl implements PersonService {
                 }
                 person.setJob(job);
             }
-            personRepository.save(person);
+            Person savedPerson = personRepository.save(person);
+            person.setId(savedPerson.getId());
+
         }
         return persons;
 
     }
+/*
+    @Override
+    public List<PersonDto> readPersonsFromExcel(InputStream inputStream) throws Exception {
+        List<PersonDto> persons = ExcelUtils.readPersonsFromExcel(inputStream);
+        for (PersonDto personDto : persons) {
+            Person person = new Person();
+            person.setName(personDto.getName());
+            person.setSurname(personDto.getSurname());
+            person.setAge(personDto.getAge());
 
+            if (personDto.getJob() != null) {
+                JobDto jobDto = personDto.getJob();
 
+                // Check if the job already exists in the database
+                Job existingJob = jobRepository.findByDepartmentCode(jobDto.getDepartmentCode());
+                if (existingJob != null) {
+                    person.setJob(existingJob);
+                } else {
+                    // The job doesn't exist, create a new one and save it
+                    Job job = new Job();
+                    job.setDepartmentName(jobDto.getDepartmentName());
+                    job.setDepartmentCode(jobDto.getDepartmentCode());
+
+                    Job savedJob = jobRepository.save(job);
+                    person.setJob(savedJob);
+                }
+            }
+
+            Person savedPerson = personRepository.save(person);
+            personDto.setId(savedPerson.getId());
+        }
+        return persons;
+    }
+
+*/
 
     @Override
     public void generateExcel(HttpServletResponse response) throws IOException {

@@ -23,9 +23,11 @@ public class ExcelUtils {
         Sheet sheet = workbook.getSheetAt(0);
 
 
-
         // Satırları oku
         Iterator<Row> rowIterator = sheet.iterator();
+        //başlıkları atla
+        rowIterator.next();
+
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
 

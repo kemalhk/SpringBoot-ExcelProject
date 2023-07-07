@@ -36,7 +36,7 @@ public class PersonController {
     }
 
     @PostMapping("/job")
-    public ResponseEntity<JobDto> createPerson(@RequestBody JobDto jobDto){
+    public ResponseEntity<JobDto> createJob(@RequestBody JobDto jobDto){
         return ResponseEntity.ok(personService.saveJob(jobDto));
     }
 

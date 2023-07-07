@@ -4,12 +4,16 @@ import com.example.ExcelProject.dto.JobDto;
 import com.example.ExcelProject.dto.PersonDto;
 import com.example.ExcelProject.entity.Job;
 import com.example.ExcelProject.entity.Person;
+import com.example.ExcelProject.repository.JobRepository;
+import com.example.ExcelProject.repository.PersonRepository;
 import com.example.ExcelProject.service.PersonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.FileInputStream;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +22,12 @@ public class PersonServiceImplIntegrationTest {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    @Autowired
+    private JobRepository jobRepository;
 
 @Test
 void testSave() {
@@ -90,7 +100,7 @@ void testSave() {
 
         // Create an updated person
         PersonDto updatedPersonDto = new PersonDto();
-        updatedPersonDto.setId(savedPersonDto.getId()); // Set the correct ID
+        updatedPersonDto.setId(savedPersonDto.getId());
         updatedPersonDto.setName("Updated-Name");
         updatedPersonDto.setSurname("Updated-Surname");
         updatedPersonDto.setAge(35);
@@ -178,5 +188,47 @@ void testSave() {
         assertEquals(jobDto.getId(), retrievedJobDto.getId());
         assertEquals(jobDto.getDepartmentCode(), retrievedJobDto.getDepartmentCode());
         assertEquals(jobDto.getDepartmentName(), retrievedJobDto.getDepartmentName());
+    }
+
+    @Test
+    void testReadPersonsFromExcel() throws Exception {
+        // Create and save a job
+        JobDto jobDto = new JobDto();
+        jobDto.setDepartmentCode("Test-Code");
+        jobDto.setDepartmentName("Test-DepartmentName");
+        JobDto savedJobDto = personService.saveJob(jobDto);
+
+        String filePath = "C:\\Users\\kemal.kara\\Downloads\\persons.xlsx";
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        List<PersonDto> result = personService.readPersonsFromExcel(fileInputStream);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        for (PersonDto personDto : result) {
+            personDto.getId();
+            Optional<Person> optionalPerson = personRepository.findById(personDto.getId());
+
+            assertTrue(optionalPerson.isPresent());
+            Person savedPerson = optionalPerson.get();
+
+            assertEquals(personDto.getName(), savedPerson.getName());
+            assertEquals(personDto.getSurname(), savedPerson.getSurname());
+            assertEquals(personDto.getAge(), savedPerson.getAge());
+
+            JobDto personJobDto = personDto.getJob();
+            assertNotNull(personJobDto);
+            personDto.getId();
+            if (savedJobDto != null) {
+                Job existingJob = jobRepository.findByDepartmentCode(savedJobDto.getDepartmentCode());
+                assertNotNull(existingJob);
+
+                savedPerson.setJob(existingJob);
+            } else {
+                savedPerson.setJob(null);
+            }
+
+            personRepository.save(savedPerson);
+        }
     }
 }
