@@ -141,7 +141,6 @@ public class PersonServiceImpl implements PersonService {
         Optional<Person> personOptional = personRepository.findById(id);
         if (personOptional.isPresent()) {
             Person person = personOptional.get();
-
             person.setName(personDto.getName());
             person.setSurname(personDto.getSurname());
             person.setAge(personDto.getAge());

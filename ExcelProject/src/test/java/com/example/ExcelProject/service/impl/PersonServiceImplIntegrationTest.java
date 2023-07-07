@@ -72,40 +72,40 @@ void testSave() {
 //    }
 
     @Test
-    void testUpdatePerson(){
+    void testUpdatePerson() {
+        // Create and save a job
         JobDto jobDto = new JobDto();
-
         jobDto.setDepartmentCode("Test-Code");
         jobDto.setDepartmentName("Test-DepartmentName");
         JobDto savedJobDto = personService.saveJob(jobDto);
         jobDto.setId(savedJobDto.getId());
 
+        // Create and save a person
         PersonDto personDto = new PersonDto();
         personDto.setName("Test-Name");
         personDto.setSurname("Test-Surname");
         personDto.setAge(1);
         personDto.setJob(jobDto);
-
         PersonDto savedPersonDto = personService.save(personDto);
 
-
+        // Create an updated person
         PersonDto updatedPersonDto = new PersonDto();
+        updatedPersonDto.setId(savedPersonDto.getId()); // Set the correct ID
         updatedPersonDto.setName("Updated-Name");
         updatedPersonDto.setSurname("Updated-Surname");
         updatedPersonDto.setAge(35);
         updatedPersonDto.setJob(jobDto);
 
-        // Kişiyi güncelle
+        // Update the person
         PersonDto result = personService.updatePerson(savedPersonDto.getId(), updatedPersonDto);
 
-        // Güncellenen kişinin bilgileri kontrol edilir
+        // Assert the updated person's information
         assertNotNull(result);
+        System.out.println(result);
         assertEquals(savedPersonDto.getId(), result.getId());
         assertEquals(updatedPersonDto.getName(), result.getName());
         assertEquals(updatedPersonDto.getSurname(), result.getSurname());
         assertEquals(updatedPersonDto.getAge(), result.getAge());
-
-
     }
     @Test
     void testDelete(){
