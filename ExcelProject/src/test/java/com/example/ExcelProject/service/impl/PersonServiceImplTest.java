@@ -34,6 +34,7 @@ class PersonServiceImplTest {
 
     @Test
     void testSave() {
+        //test verileri
         PersonDto personDto = new PersonDto();
         personDto.setName("Test-Name");
         personDto.setSurname("Test-Surname");
@@ -43,13 +44,17 @@ class PersonServiceImplTest {
         jobDto.setDepartmentCode("Test-Code");
         jobDto.setDepartmentName("Test-DepartmentName");
         personDto.setJob(jobDto);
-        Person personMock = Mockito.mock(Person.class);
 
+        // Person sınıfı için mock oluşturulur
+        Person personMock = Mockito.mock(Person.class);
+        // personMock nesnesi üzerindeki getId() metodu için beklenen değer ayarlanır
         Mockito.when(personMock.getId()).thenReturn(1L);
+        // metodunun personMock nesnesini döndürmesi için yapılandırma yapılır
         Mockito.when(personRepository.save(ArgumentMatchers.any(Person.class))).thenReturn(personMock);
+
         PersonDto result = personService.save(personDto);
 
-
+        // Sonuçların doğruluğu assert edilir
         assertEquals(result.getName(),personDto.getName());
         assertEquals(result.getId(),1L);
 

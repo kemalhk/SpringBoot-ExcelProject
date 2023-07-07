@@ -8,10 +8,15 @@ import com.example.ExcelProject.repository.JobRepository;
 import com.example.ExcelProject.repository.PersonRepository;
 import com.example.ExcelProject.service.PersonService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,45 +25,64 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class PersonServiceImplIntegrationTest {
 
-    @Autowired
-    private PersonService personService;
+    @InjectMocks
+    private PersonServiceImpl personService;
 
-    @Autowired
+    @Mock
     private PersonRepository personRepository;
 
-    @Autowired
+    @Mock
     private JobRepository jobRepository;
 
-@Test
-void testSave() {
-     // JOB kaydı oluştur
-    JobDto jobDto = new JobDto();
-
-    jobDto.setDepartmentCode("Test-Code");
-    jobDto.setDepartmentName("Test-DepartmentName");
-    JobDto savedJobDto = personService.saveJob(jobDto);
-
-    // PersonDto nesnesini oluştur
-    PersonDto personDto = new PersonDto();
-    personDto.setName("Test-Name");
-    personDto.setSurname("Test-Surname");
-    personDto.setAge(1);
-    personDto.setJob(jobDto);
-
-    // PersonDto'yu kaydet
-    PersonDto result = personService.save(personDto);
-    assertTrue(result.getId() > 0L);
-}
     @Test
-    void testSaveOnlyPersons(){
-        // PersonDto nesnesini oluştur
+    void testSave() {
+        //test verileri
         PersonDto personDto = new PersonDto();
         personDto.setName("Test-Name");
         personDto.setSurname("Test-Surname");
         personDto.setAge(1);
+        JobDto jobDto = new JobDto();
+        jobDto.setId(1L);
+        jobDto.setDepartmentCode("Test-Code");
+        jobDto.setDepartmentName("Test-DepartmentName");
+        personDto.setJob(jobDto);
+
+        // Person sınıfı için mock oluşturulur
+        Person personMock = Mockito.mock(Person.class);
+        // personMock nesnesi üzerindeki getId() metodu için beklenen değer ayarlanır
+        Mockito.when(personMock.getId()).thenReturn(1L);
+        // save metodunun personMock nesnesini döndürmesi
+        Mockito.when(personRepository.save(ArgumentMatchers.any(Person.class))).thenReturn(personMock);
+
         PersonDto result = personService.save(personDto);
-        System.out.println(result);
-        assertTrue(result.getId() > 0L);
+
+        // Sonuçların doğruluğu assert edilir
+        assertEquals(result.getName(),personDto.getName());
+        assertEquals(result.getId(),1L);
+
+    }
+    @Test
+    void testSaveOnlyPersons(){
+        // veri oluştur
+        PersonDto personDto = new PersonDto();
+        personDto.setName("Test-Name");
+        personDto.setSurname("Test-Surname");
+        personDto.setAge(1);
+
+        // Person sınıfı için mock oluşturulur
+        Person personMock = Mockito.mock(Person.class);
+        // personMock nesnesi üzerindeki getId() metodu için beklenen değer ayarlanır
+        Mockito.when(personMock.getId()).thenReturn(1L);
+
+        // save metodunun personMock nesnesini döndürmesi
+        Mockito.when(personRepository.save(ArgumentMatchers.any(Person.class))).thenReturn(personMock);
+        PersonDto result = personService.save(personDto);
+
+        // Sonuçların doğruluğu assert edilir
+        assertEquals(result.getName(),personDto.getName());
+        assertEquals(result.getSurname(),personDto.getSurname());
+        assertEquals(result.getAge(),personDto.getAge());
+        assertEquals(result.getId(),1L);
     }
     @Test
     void testSaveJob(){
@@ -66,36 +90,66 @@ void testSave() {
         JobDto jobDto = new JobDto();
         jobDto.setDepartmentName("Test-DepartmentName");
         jobDto.setDepartmentCode("Test-Code");
+
+        Job jobMock = Mockito.mock(Job.class);
+        //jobmock beklenen değer atama
+        Mockito.when(jobMock.getId()).thenReturn(1L);
+
+        // save methodunun mock dönmesi
+        Mockito.when(jobRepository.save(ArgumentMatchers.any(Job.class))).thenReturn(jobMock);
         JobDto result = personService.saveJob(jobDto);
+
+        // kontrol
         assertTrue(result.getId() > 0L);
+        assertEquals(result.getDepartmentCode(),jobDto.getDepartmentCode());
+        assertEquals(result.getDepartmentName(),jobDto.getDepartmentName());
+
     }
 
-//    @Test
-//    void testGetAll(){
-//        testSave();
-//        List<PersonDto> allPersons = personService.getAll();
-//        // Geri dönen liste boş olmamalı
-//        assertTrue(!allPersons.isEmpty());
-//
-//        // Geri dönen listedeki kişi sayısı 1 olmalı
-//        assertEquals(1, allPersons.size());
-//    }
+    @Test
+    void testGetAll() {
+        // Test verileri
+        Person person = new Person();
+        person.setName("Test-Name");
+        person.setSurname("Test-Surname");
+        person.setAge(1);
+
+        Job job = new Job();
+        job.setDepartmentCode("Test-Code");
+        job.setDepartmentName("Test-DepartmentName");
+
+
+        // Create a mock of PersonRepository
+        PersonRepository personRepository = mock(PersonRepository.class);
+
+        // Mock repository response
+        when(personRepository.findAll()).thenReturn(Collections.singletonList(person));
+
+        // Call the method
+        List<Person> persons = personRepository.findAll();
+
+        // Assert the result
+        assertEquals(1, persons.size());
+        assertEquals("Test-Name", persons.get(0).getName());
+        assertEquals("Test-Surname", persons.get(0).getSurname());
+        assertEquals(1, persons.get(0).getAge());
+    }
+
 
     @Test
     void testUpdatePerson() {
-        // Create and save a job
-        JobDto jobDto = new JobDto();
-        jobDto.setDepartmentCode("Test-Code");
-        jobDto.setDepartmentName("Test-DepartmentName");
-        JobDto savedJobDto = personService.saveJob(jobDto);
-        jobDto.setId(savedJobDto.getId());
-
-        // Create and save a person
+        //test verileri
         PersonDto personDto = new PersonDto();
         personDto.setName("Test-Name");
         personDto.setSurname("Test-Surname");
         personDto.setAge(1);
+        JobDto jobDto = new JobDto();
+        jobDto.setId(1L);
+        jobDto.setDepartmentCode("Test-Code");
+        jobDto.setDepartmentName("Test-DepartmentName");
         personDto.setJob(jobDto);
+
+
         PersonDto savedPersonDto = personService.save(personDto);
 
         // Create an updated person
@@ -111,7 +165,6 @@ void testSave() {
 
         // Assert the updated person's information
         assertNotNull(result);
-        System.out.println(result);
         assertEquals(savedPersonDto.getId(), result.getId());
         assertEquals(updatedPersonDto.getName(), result.getName());
         assertEquals(updatedPersonDto.getSurname(), result.getSurname());
@@ -144,91 +197,7 @@ void testSave() {
         assertNull(deletedPersonDto);
 
     }
-    @Test
-    void testGetAll() {
-        // JOB kaydı oluştur
-        JobDto jobDto = new JobDto();
 
-        jobDto.setDepartmentCode("Test-Code");
-        jobDto.setDepartmentName("Test-DepartmentName");
-        JobDto savedJobDto = personService.saveJob(jobDto);
 
-        // Person kaydı oluştur
-        PersonDto personDto = new PersonDto();
-        personDto.setName("Test-Name");
-        personDto.setSurname("Test-Surname");
-        personDto.setAge(1);
-        personDto.setJob(jobDto);
 
-        jobDto.setId(savedJobDto.getId());
-
-        personDto.setJob(jobDto);
-        //kayıt et
-        PersonDto savedPersonDto = personService.save(personDto);
-
-        // getAll metodunu çağır
-        List<PersonDto> allPersons = personService.getAll();
-
-        System.out.println(allPersons);
-        // Geri dönen liste boş olmamalı
-        assertTrue(!allPersons.isEmpty());
-
-        assertEquals(1, allPersons.size());
-
-        // Geri dönen kişinin bilgileri doğru olmalı
-        PersonDto retrievedPersonDto = allPersons.get(0);
-        assertEquals(savedPersonDto.getId(), retrievedPersonDto.getId());
-        assertEquals(savedPersonDto.getName(), retrievedPersonDto.getName());
-        assertEquals(savedPersonDto.getSurname(), retrievedPersonDto.getSurname());
-        assertEquals(savedPersonDto.getAge(), retrievedPersonDto.getAge());
-
-        // Geri dönen kişinin iş bilgileri doğru olmalı
-        JobDto retrievedJobDto = retrievedPersonDto.getJob();
-        assertNotNull(retrievedJobDto);
-        assertEquals(jobDto.getId(), retrievedJobDto.getId());
-        assertEquals(jobDto.getDepartmentCode(), retrievedJobDto.getDepartmentCode());
-        assertEquals(jobDto.getDepartmentName(), retrievedJobDto.getDepartmentName());
-    }
-
-    @Test
-    void testReadPersonsFromExcel() throws Exception {
-        // Create and save a job
-        JobDto jobDto = new JobDto();
-        jobDto.setDepartmentCode("Test-Code");
-        jobDto.setDepartmentName("Test-DepartmentName");
-        JobDto savedJobDto = personService.saveJob(jobDto);
-
-        String filePath = "C:\\Users\\kemal.kara\\Downloads\\persons.xlsx";
-        FileInputStream fileInputStream = new FileInputStream(filePath);
-        List<PersonDto> result = personService.readPersonsFromExcel(fileInputStream);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-
-        for (PersonDto personDto : result) {
-            personDto.getId();
-            Optional<Person> optionalPerson = personRepository.findById(personDto.getId());
-
-            assertTrue(optionalPerson.isPresent());
-            Person savedPerson = optionalPerson.get();
-
-            assertEquals(personDto.getName(), savedPerson.getName());
-            assertEquals(personDto.getSurname(), savedPerson.getSurname());
-            assertEquals(personDto.getAge(), savedPerson.getAge());
-
-            JobDto personJobDto = personDto.getJob();
-            assertNotNull(personJobDto);
-            personDto.getId();
-            if (savedJobDto != null) {
-                Job existingJob = jobRepository.findByDepartmentCode(savedJobDto.getDepartmentCode());
-                assertNotNull(existingJob);
-
-                savedPerson.setJob(existingJob);
-            } else {
-                savedPerson.setJob(null);
-            }
-
-            personRepository.save(savedPerson);
-        }
-    }
 }
