@@ -6,15 +6,19 @@ import com.example.ExcelProject.entity.Job;
 import com.example.ExcelProject.entity.Person;
 import com.example.ExcelProject.repository.JobRepository;
 import com.example.ExcelProject.repository.PersonRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceImplTest {
@@ -28,9 +32,6 @@ class PersonServiceImplTest {
     private JobRepository jobRepository;
 
 
-    @Test
-    void getPersonById() {
-    }
 
     @Test
     void testSave() {
@@ -50,33 +51,13 @@ class PersonServiceImplTest {
         // personMock nesnesi üzerindeki getId() metodu için beklenen değer ayarlanır
         Mockito.when(personMock.getId()).thenReturn(1L);
         // metodunun personMock nesnesini döndürmesi için yapılandırma yapılır
-        Mockito.when(personRepository.save(ArgumentMatchers.any(Person.class))).thenReturn(personMock);
+        Mockito.when(personRepository.save(any(Person.class))).thenReturn(personMock);
 
         PersonDto result = personService.save(personDto);
 
         // Sonuçların doğruluğu assert edilir
-        assertEquals(result.getName(),personDto.getName());
-        assertEquals(result.getId(),1L);
-
+        assertEquals(result.getName(), personDto.getName());
+        assertEquals(result.getId(), 1L);
 
     }
-
-    @Test
-    void getAll() {
-    }
-
-    @Test
-    void delete() {
-    }
-
-    @Test
-    void updatePerson() {
-    }
-
-    @Test
-    void testGetAll() {
-    }
-
-
-
 }

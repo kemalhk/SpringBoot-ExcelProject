@@ -15,7 +15,6 @@ import java.io.ByteArrayOutputStream;
 
 public interface PersonService {
 
-
     //////////////////////////////////////////
     PersonDto getPersonById(Long id);
 
@@ -27,7 +26,7 @@ public interface PersonService {
     JobDto saveJob(JobDto JobDto);
 
     // Delete operation
-    void delete(Long id);
+    void delete(Long id) throws Exception;
 
     // Read operation
     List<PersonDto> getAll();
@@ -36,15 +35,10 @@ public interface PersonService {
     PersonDto updatePerson(Long id, PersonDto personDto);
 
 
-
     List<PersonDto> readPersonsFromExcel(InputStream inputStream) throws Exception;
 
 
-
     void generateExcel(HttpServletResponse response) throws IOException;
-
-
-
 
 
     Page<PersonDto> getAll(Pageable pageable);

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -132,7 +134,13 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void delete(Long id) {
-        personRepository.deleteById(id);
+        Optional<Person> personOptional = personRepository.findById(id);
+        if (personOptional.isPresent()) {
+            personRepository.deleteById(id);
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found");
+        }
     }
 
     @Override
@@ -213,41 +221,6 @@ public class PersonServiceImpl implements PersonService {
         return persons;
 
     }
-/*
-    @Override
-    public List<PersonDto> readPersonsFromExcel(InputStream inputStream) throws Exception {
-        List<PersonDto> persons = ExcelUtils.readPersonsFromExcel(inputStream);
-        for (PersonDto personDto : persons) {
-            Person person = new Person();
-            person.setName(personDto.getName());
-            person.setSurname(personDto.getSurname());
-            person.setAge(personDto.getAge());
-
-            if (personDto.getJob() != null) {
-                JobDto jobDto = personDto.getJob();
-
-                // Check if the job already exists in the database
-                Job existingJob = jobRepository.findByDepartmentCode(jobDto.getDepartmentCode());
-                if (existingJob != null) {
-                    person.setJob(existingJob);
-                } else {
-                    // The job doesn't exist, create a new one and save it
-                    Job job = new Job();
-                    job.setDepartmentName(jobDto.getDepartmentName());
-                    job.setDepartmentCode(jobDto.getDepartmentCode());
-
-                    Job savedJob = jobRepository.save(job);
-                    person.setJob(savedJob);
-                }
-            }
-
-            Person savedPerson = personRepository.save(person);
-            personDto.setId(savedPerson.getId());
-        }
-        return persons;
-    }
-
-*/
 
     @Override
     public void generateExcel(HttpServletResponse response) throws IOException {

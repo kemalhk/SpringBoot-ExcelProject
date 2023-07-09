@@ -52,7 +52,7 @@ public class PersonController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePerson(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePerson(@PathVariable Long id) throws Exception {
         PersonDto personDto = personService.getPersonById(id);
         if (personDto != null) {
             personService.delete(id);
